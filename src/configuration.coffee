@@ -120,6 +120,12 @@ module.exports = class Configuration
     # its log files. Defaults to `~/Library/Logs/Pow`.
     @logRoot    = env.POW_LOG_ROOT    ? libraryPath "Logs", "Pow"
 
+    # `POW_CERT`: the path to a cert in pem format. Passed to node HTTPS module.
+    @cert   = env.POW_CERT   ? libraryPath "Keychains", "Pow", "cert.pem"
+
+    # `POW_KEY`: the path to a key corresponding to `POW_CERT`. Passed to node HTTPS module.
+    @key    = env.POW_KEY    ? libraryPath "Keychains", "Pow", "key.pem"
+
     # `POW_RVM_PATH` (**deprecated**): path to the rvm initialization
     # script. Defaults to `~/.rvm/scripts/rvm`.
     @rvmPath    = env.POW_RVM_PATH    ? path.join process.env.HOME, ".rvm/scripts/rvm"

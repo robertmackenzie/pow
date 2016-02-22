@@ -2,7 +2,7 @@
 # starting and stopping an `HttpServer` and a `DnsServer` in tandem.
 
 {EventEmitter} = require "events"
-HttpServer     = require "./http_server"
+HttpsServer     = require "./https_server"
 DnsServer      = require "./dns_server"
 fs             = require "fs"
 path           = require "path"
@@ -10,8 +10,8 @@ path           = require "path"
 module.exports = class Daemon extends EventEmitter
   # Create a new `Daemon` with the given `Configuration` instance.
   constructor: (@configuration) ->
-    # `HttpServer` and `DnsServer` instances are created accordingly.
-    @httpServer = new HttpServer @configuration
+    # `HttpsServer` and `DnsServer` instances are created accordingly.
+    @httpsServer = new HttpsServer @configuration
     @dnsServer  = new DnsServer @configuration
     # The daemon stops in response to `SIGINT`, `SIGTERM` and
     # `SIGQUIT` signals.
@@ -71,12 +71,12 @@ module.exports = class Daemon extends EventEmitter
 
     flunk = (err) =>
       @starting = false
-      try @httpServer.close()
+      try @httpsServer.close()
       try @dnsServer.close()
       @emit "error", err
 
     {httpPort, dnsPort} = @configuration
-    startServer @httpServer, httpPort, (err) =>
+    startServer @httpsServer, httpPort, (err) =>
       if err then flunk err
       else startServer @dnsServer, dnsPort, (err) =>
         if err then flunk err
@@ -100,7 +100,7 @@ module.exports = class Daemon extends EventEmitter
       catch err
         callback err
 
-    stopServer @httpServer, =>
+    stopServer @httpsServer, =>
       stopServer @dnsServer, =>
         @stopping = false
         @started  = false
